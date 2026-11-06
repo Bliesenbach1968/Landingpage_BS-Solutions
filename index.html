@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BS Solutions UG (haftungsbeschränkt)</title>
+  <meta name="description" content="BS Solutions – Software für Einsatzplanung und Bestandssanierung: myDispo & Bestandsprofi.">
+  <meta property="og:image" content="Public/web/hero.jpg">
+  <link rel="icon" type="image/png" href="Public/web/favicon-64.png">
+  <link rel="apple-touch-icon" href="Public/web/apple-touch-icon.png">
+  <link rel="preload" as="image" href="Public/web/hero.jpg">
+  <link rel="stylesheet" href="hero.css">
+</head>
+<body>
+  <main class="stage" id="stage">
+
+    <!-- Schluss-Szene: Hero-Video (liegt unter dem Film, wird weich eingeblendet; danach startet der Film von vorn) -->
+    <video class="hero-image" id="heroVideo" muted playsinline preload="auto" poster="Public/web/hero.jpg"
+           aria-label="BS Solutions – Team arbeitet gemeinsam an einem digitalen Dashboard">
+      <source src="Public/BS%20Solutions%20hero_Video_original.mp4" type="video/mp4">
+    </video>
+
+    <!-- Film: vier Clips, die mit Pixel-Übergang ineinander übergehen (Reihenfolge/Längen in hero.js) -->
+    <div class="film" id="film">
+      <video class="clip is-active" id="clipA" muted playsinline preload="auto" poster="Public/web/bestand-poster.jpg">
+        <source src="Public/bg-video.mp4" type="video/mp4">
+      </video>
+      <video class="clip" id="clipB" muted playsinline preload="auto" poster="Public/web/mydispo-poster.jpg">
+        <source src="Public/myDispo%20Film%20aktuell.mp4" type="video/mp4">
+      </video>
+      <video class="clip" id="clipC" muted playsinline preload="auto" poster="Public/web/bss-poster.jpg">
+        <source src="Public/BSS%20Video_original.mp4" type="video/mp4">
+      </video>
+      <video class="clip" id="clipD" muted playsinline preload="auto" poster="Public/web/rakete-poster.jpg">
+        <source src="Public/BS%20Rakete%20Video_original.mp4" type="video/mp4">
+      </video>
+      <!-- Film-Look: Pixel-Glitch, Korn, Kratzer, Flackern, Vignette -->
+      <canvas class="pixel-fx" id="pixelFx" aria-hidden="true"></canvas>
+      <div class="fx grain" id="grain" aria-hidden="true"></div>
+      <div class="fx scratches" aria-hidden="true"></div>
+      <div class="fx flicker" aria-hidden="true"></div>
+      <div class="fx vignette" aria-hidden="true"></div>
+    </div>
+
+    <!-- weicher Lichtschleier beim Übergang -->
+    <div class="veil" aria-hidden="true"></div>
+
+    <!-- Logo-Leiste (erscheint erst nach dem Film) -->
+    <nav class="logo-bar" id="logoBar" aria-label="Unsere Produkte">
+      <a href="https://mydispo.cloud" class="logo-chip" target="_blank" rel="noopener">
+        <img src="Public/Logo_myDispo.png" alt="myDispo – Alltagsbegleitung und Einsatzplanung">
+      </a>
+      <a href="https://bestandsprofi.de" class="logo-chip" target="_blank" rel="noopener">
+        <img src="Public/web/logo-bestandsprofi.png" alt="Bestandsprofi – Sanierungssoftware">
+      </a>
+    </nav>
+
+    <!-- Steuerung während des Films -->
+    <div class="film-controls" id="filmControls">
+      <button type="button" class="ctrl" id="soundBtn" aria-pressed="false">🔇 Ton an</button>
+      <button type="button" class="ctrl" id="skipBtn">Überspringen ⏭</button>
+    </div>
+    <div class="progress" id="progress"><span id="progressBar"></span></div>
+
+    <!-- Fallback, falls Autoplay blockiert ist -->
+    <button type="button" class="start-btn" id="startBtn" hidden>▶ Film starten</button>
+
+    <!-- Nach dem Film -->
+    <div class="end-ui" id="endUi">
+      <button type="button" class="ctrl" id="replayBtn">↻ Film von vorn</button>
+    </div>
+
+    <!-- immer sichtbar: KI-Kennzeichnung (EU AI Act Art. 50) und Pflichtlinks -->
+    <footer class="footer-bar">
+      <p class="ai-label">KI-generierter Film · dargestellte Personen sind nicht real</p>
+      <nav class="legal-links">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
+    </footer>
+  </main>
+
+  <script src="hero.js"></script>
+</body>
+</html>
