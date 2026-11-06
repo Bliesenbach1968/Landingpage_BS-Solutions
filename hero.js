@@ -1,4 +1,4 @@
-/* BS Solutions – Intro-Film (Endlosschleife): 3 gemischte Clips + Rakete (immer an 3. Stelle) → weiche Überblendung → Hero-Video → Logos → von vorn */
+/* BS Solutions – Intro-Film (Endlosschleife): 3 gemischte Clips + Future-Video (immer an 3. Stelle) → weiche Überblendung → Hero-Video → Logos → von vorn */
 (() => {
   const $ = id => document.getElementById(id);
   const stage = $('stage');
@@ -23,7 +23,7 @@
    * Die gemischten Szenen werden um sie herum verteilt.
    */
   const FIXED = [
-    { at: 2, scene: { el: $('clipD'), start: 0, length: null, expected: 8.08 } },   // Rakete – immer als Drittes
+    { at: 2, scene: { el: $('clipD'), start: 0, length: null, expected: 8.08 } },   // BS Future – immer als Drittes
   ];
   const ALL_SCENES = [...SCENES, ...FIXED.map(f => f.scene)];
   const clips = ALL_SCENES.map(s => s.el);
