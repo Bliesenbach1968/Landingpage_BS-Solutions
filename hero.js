@@ -14,7 +14,7 @@
    */
   const SCENES = [
     { el: $('clipA'), start: 0, length: null },   // bg-video (8 s)
-    { el: $('clipB'), start: 0, length: null, expected: 11.63 },   // BS Büro (11,6 s)
+    { el: $('clipB'), start: 0, length: 3, expected: 11.63 },      // BS Büro – nur die ersten 3 s
     { el: $('clipC'), start: 0, length: null, expected: 8.08 },   // BSS-Video (8 s, fragmentierte MP4)
   ];
 
@@ -177,7 +177,9 @@
     const sc = seq[index], len = sceneLength(sc);
     if (!len || !lengthKnown(sc)) return;          // sonst entscheidet das 'ended'-Event
     const isLast = index === seq.length - 1;
-    if (sceneTime(sc) >= len - (isLast ? 0 : CROSSFADE)) nextScene();
+    // Gekürzte Szenen (feste length) laufen voll aus; sonst beginnt der Übergang kurz vor Clip-Ende
+    const lead = (isLast || sc.length != null) ? 0 : CROSSFADE;
+    if (sceneTime(sc) >= len - lead) nextScene();
   }
 
   ALL_SCENES.forEach(sc => {
