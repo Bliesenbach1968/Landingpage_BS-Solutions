@@ -13,7 +13,7 @@
    * expected: ungefähre Gesamtlänge – nur für den Fortschrittsbalken
    */
   const SCENES = [
-    { el: $('clipA'), start: 0, length: null },   // bg-video (8 s)
+    { el: $('clipA'), start: 0, length: 3.1 },    // bg-video – insgesamt 4 s sichtbar (3,1 s + 0,9 s Übergang)
     { el: $('clipB'), start: 0, length: 3, expected: 11.63 },      // BS Büro – nur die ersten 3 s
     { el: $('clipC'), start: 0, length: null, expected: 8.08 },   // BSS-Video (8 s, fragmentierte MP4)
   ];

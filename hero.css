@@ -198,14 +198,76 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 .ctrl.pulse { animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(26,136,207,.7); } 50% { box-shadow: 0 0 0 10px rgba(26,136,207,0); } }
 
-/* ---------- Mobil ---------- */
+/* ---------- Claim & Verlauf (nur im Hochformat sichtbar) ---------- */
+.claim {                      /* Querformat: Text steckt im Video → nur für Screenreader/Suchmaschinen */
+  position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+.mobile-shade { display: none; }
+
+/* ---------- Mobil: Hochformat ---------- */
 @media (max-aspect-ratio: 1/1) {
   .hero-image { object-position: 18% center; }
-  .logo-bar { left: 50%; right: auto; transform: translateX(-50%); top: auto; bottom: 130px; flex-direction: column; }
-  .logo-chip { height: 64px; }
-  .footer-bar { left: 12px; right: 12px; bottom: 12px; flex-direction: column; gap: 6px; font-size: .72rem; }
+
+  /* Verlauf ab ca. 60 % Höhe – der eingebrannte Schriftzug liegt bei 80–87 % und verschwindet darunter */
+  .mobile-shade {
+    display: block; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: linear-gradient(to bottom, transparent 55%, rgba(4,14,28,.8) 66%, rgb(4,14,28) 76%);
+    opacity: 0; transition: opacity .6s ease;
+  }
+  .stage.revealed .mobile-shade { opacity: 1; transition: opacity 1.6s ease .4s; }
+
+  .claim {
+    position: absolute; left: 20px; right: 20px; top: auto; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal;
+    bottom: calc(126px + env(safe-area-inset-bottom)); z-index: 6;
+    font-size: clamp(1.7rem, 8.4vw, 2.6rem); font-weight: 700; line-height: 1.08; letter-spacing: -.01em;
+    text-align: center; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.55);
+    opacity: 0; transform: translateY(14px); transition: opacity .4s ease, transform .4s ease;
+  }
+  .claim span { display: block; color: #7cc4f5; }
+  .stage.revealed .claim { opacity: 1; transform: none; transition: opacity 1.2s ease 1.4s, transform 1.4s cubic-bezier(.22,1,.36,1) 1.4s; }
+
+  /* Logos weiter oben, mittig unter dem Firmenlogo im Video */
+  .logo-bar {
+    left: 50%; right: auto; top: 35%; bottom: auto; transform: translateX(-50%);
+    flex-direction: column; gap: 12px;
+  }
+  .logo-chip { height: 66px; padding: 8px 14px; }
+
+  /* Steuerung in einer Zeile: links „Film von vorn“, rechts Ton/Überspringen */
+  .film-controls { left: auto; right: 16px; bottom: calc(70px + env(safe-area-inset-bottom)); gap: 8px; }
+  .end-ui { left: 16px; transform: none; bottom: calc(70px + env(safe-area-inset-bottom)); }
+  .ctrl { font-size: .85rem; padding: .55em 1em; }
+
+  .footer-bar {
+    left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+    flex-direction: column; gap: 6px; font-size: .72rem;
+  }
   .ai-label { text-align: center; }
-  .film-controls { left: 16px; right: 16px; bottom: 76px; justify-content: center; }
-  .end-ui { bottom: 124px; }
-  .logo-bar { bottom: 176px; }
+}
+
+/* ---------- Mobil: Querformat (niedrige Höhe) ---------- */
+/* Breite Bildschirme schneiden das Video oben/unten ab – der Video-Schriftzug läge dann auf der Fußleiste.
+   Deshalb auch hier: Verlauf unten + Claim als Text. */
+@media (min-aspect-ratio: 1/1) and (max-height: 500px) {
+  .mobile-shade {
+    display: block; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: linear-gradient(to bottom, transparent 48%, rgba(4,14,28,.8) 62%, rgb(4,14,28) 74%);
+    opacity: 0; transition: opacity .6s ease;
+  }
+  .stage.revealed .mobile-shade { opacity: 1; transition: opacity 1.6s ease .4s; }
+  .claim {
+    position: absolute; left: 16px; right: 16px; top: auto; width: auto; height: auto; margin: 0; overflow: visible; clip: auto;
+    bottom: 88px; z-index: 6;
+    font-size: clamp(1.2rem, 6vh, 1.6rem); font-weight: 700; line-height: 1.1; color: #fff;
+    text-shadow: 0 2px 14px rgba(0,0,0,.55);
+    opacity: 0; transition: opacity .4s ease;
+  }
+  .claim span { color: #7cc4f5; }
+  .stage.revealed .claim { opacity: 1; transition: opacity 1.2s ease 1.4s; }
+
+  .logo-chip { height: 46px; padding: 6px 12px; border-radius: 12px; }
+  .film-controls { right: 14px; bottom: 44px; }
+  .footer-bar { left: 14px; right: 14px; bottom: 10px; font-size: .7rem; }
+  .ctrl { font-size: .8rem; padding: .45em .9em; }
+  .end-ui { left: 14px; transform: none; bottom: 44px; }
 }
