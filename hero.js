@@ -14,7 +14,7 @@
    */
   const SCENES = [
     { el: $('clipA'), start: 0, length: null },   // bg-video (8 s)
-    { el: $('clipB'), start: 0, length: 5 },      // myDispo-Film, auf 5 s gekürzt
+    { el: $('clipB'), start: 0, length: null, expected: 11.63 },   // BS Büro (11,6 s)
     { el: $('clipC'), start: 0, length: null, expected: 8.08 },   // BSS-Video (8 s, fragmentierte MP4)
   ];
 
@@ -41,9 +41,9 @@
    * nie zweimal hintereinander dieselbe Reihenfolge.
    */
   const ORDERS = [
-    [0, 1, 2],   // 1. Durchlauf: bg-video, myDispo, BSS
-    [1, 0, 2],   // 2. Durchlauf: myDispo, bg-video, BSS
-    [2, 1, 0],   // 3. Durchlauf: BSS, myDispo, bg-video
+    [0, 1, 2],   // 1. Durchlauf: bg-video, Büro, BSS
+    [1, 0, 2],   // 2. Durchlauf: Büro, bg-video, BSS
+    [2, 1, 0],   // 3. Durchlauf: BSS, Büro, bg-video
   ];
   let pass = 0;
   let lastOrder = ORDERS[0];

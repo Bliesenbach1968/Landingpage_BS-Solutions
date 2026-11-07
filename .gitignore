@@ -5,3 +5,7 @@ script.js
 # nicht mehr verwendet (lokal behalten)
 Public/BS Rakete Video_original.mp4
 Public/web/rakete-poster.jpg
+Public/myDispo Film aktuell.mp4
+Public/web/mydispo-poster.jpg
+# Original mit Umlaut im Namen (Website nutzt die Kopie "BS Buero_Video_original.mp4")
+Public/BS Büro_Video_original.mp4
