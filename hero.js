@@ -288,8 +288,10 @@
     ALL_SCENES.forEach(sc => {
       stop(sc.el);
       sc.el.currentTime = sc.start;
-      sc.el.classList.toggle('is-active', sc === seq[0]);
+      sc.el.classList.remove('is-active');
     });
+    void stage.offsetWidth;                      // Reflow: CSS-Animationen (z. B. „Bestandsprofi“) starten neu
+    seq[0].el.classList.add('is-active');
     index = 0; current = seq[0].el;
     progressMax = 0;
     progressBar.style.width = '0';

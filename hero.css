@@ -31,6 +31,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
   pointer-events: none;
 }
 
+/* ---------- Bestandsprofi-Logo zum bg-video: freigestellt, mittig ein- und ausblenden ---------- */
+.clip-title {
+  position: absolute; z-index: 1; left: 50%; top: 50%;
+  width: clamp(280px, 46vw, 760px);
+  transform: translate(-50%, -50%);
+  pointer-events: none; opacity: 0;
+}
+.clip-title img {
+  width: 100%; height: auto; display: block;
+  filter: drop-shadow(0 4px 18px rgba(0,0,0,.6)) drop-shadow(0 1px 4px rgba(0,0,0,.5));
+}
+/* Clip ist 4 s sichtbar: ein (0,4–1,2 s), stehen, aus (bis 3,2 s) – vor dem Pixel-Übergang */
+#clipA.is-active ~ .clip-title { animation: clipTitle 4s ease both; }
+@keyframes clipTitle {
+  0%, 10% { opacity: 0; transform: translate(-50%, -50%) scale(.96); filter: blur(8px); }
+  30%     { opacity: 1; transform: translate(-50%, -50%) scale(1);   filter: blur(0); }
+  62%     { opacity: 1; transform: translate(-50%, -50%) scale(1.02); filter: blur(0); }
+  80%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.04); filter: blur(6px); }
+}
+@media (max-aspect-ratio: 1/1) { .clip-title { width: 84vw; } }
+@media (prefers-reduced-motion: reduce) { #clipA.is-active ~ .clip-title { animation: none; } }
+
 /* ---------- Film-Look ---------- */
 .clip { filter: contrast(1.14) saturate(1.18) sepia(.06) brightness(.97); }
 .clip.is-active { animation: weave 1.6s steps(1) infinite; }
@@ -110,31 +132,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 .stage.revealed .veil { animation: veil 3s ease-in-out forwards; }
 @keyframes veil { 0% { opacity: 0; } 40% { opacity: 1; } 100% { opacity: 0; } }
 
-/* ---------- Logo-Leiste ---------- */
+/* ---------- Logo-Leiste (Schlussbild) ---------- */
+/* Freigestellte PNGs ohne Hintergrund (wie das Logo im Film). Oben rechts, neben dem BS-Solutions-Logo im Video. */
 .logo-bar {
+  --logo-h: min(7.4vw, 13vh, 132px);
   position: absolute; top: clamp(14px, 3vh, 32px); right: clamp(14px, 3vw, 48px); z-index: 10;
-  display: flex; gap: clamp(10px, 1.6vw, 22px); align-items: center;
-  visibility: hidden;
+  display: flex; gap: clamp(16px, 2.2vw, 40px); align-items: center;
+  visibility: hidden; transition: opacity .6s ease;
 }
 .stage.logos-in .logo-bar { visibility: visible; }
 .logo-chip {
-  display: flex; align-items: center; justify-content: center;
-  height: clamp(54px, 7vh, 78px); padding: 8px clamp(14px, 1.5vw, 22px);
-  background: rgba(255,255,255,.88);
-  backdrop-filter: blur(10px) saturate(1.4); -webkit-backdrop-filter: blur(10px) saturate(1.4);
-  border: 1px solid rgba(255,255,255,.9);
-  border-radius: 16px;
-  box-shadow: 0 18px 40px -18px rgba(5,25,45,.7);
+  display: block; height: var(--logo-h);
   opacity: 0;
-  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
-}
-.logo-chip img { height: 100%; width: auto; display: block; }
-.logo-chip:hover, .logo-chip:focus-visible {
-  transform: translateY(-3px) scale(1.04);
-  background: #fff;
-  box-shadow: 0 24px 50px -16px rgba(5,25,45,.8), 0 0 0 3px rgba(26,136,207,.55);
+  transition: transform .25s ease, filter .25s ease;
   outline: none;
 }
+.logo-chip img {
+  height: 100%; width: auto; display: block;
+  filter: drop-shadow(0 4px 18px rgba(0,0,0,.6)) drop-shadow(0 1px 4px rgba(0,0,0,.5));
+}
+.logo-chip:hover, .logo-chip:focus-visible { transform: translateY(-4px) scale(1.03); }
+.logo-chip:focus-visible img { filter: drop-shadow(0 0 10px rgba(124,196,245,.9)) drop-shadow(0 4px 18px rgba(0,0,0,.6)); }
 .stage.logos-in .logo-chip { animation: glideIn 1.2s cubic-bezier(.22,1,.36,1) both; }
 .stage.logos-in .logo-chip:nth-child(2) { animation-delay: .2s; }
 @keyframes glideIn {
@@ -228,10 +246,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
 
   /* Logos weiter oben, mittig unter dem Firmenlogo im Video */
   .logo-bar {
+    --logo-h: min(17vw, 9vh, 96px);
     left: 50%; right: auto; top: 35%; bottom: auto; transform: translateX(-50%);
     flex-direction: column; gap: 12px;
   }
-  .logo-chip { height: 66px; padding: 8px 14px; }
+  /* läuft der Film erneut, würden die Logos mittig das Bild verdecken → bis zum Schlussbild ausblenden */
+  .stage.logos-in:not(.revealed) .logo-bar { opacity: 0; pointer-events: none; }
 
   /* Steuerung in einer Zeile: links „Film von vorn“, rechts Ton/Überspringen */
   .film-controls { left: auto; right: 16px; bottom: calc(70px + env(safe-area-inset-bottom)); gap: 8px; }
@@ -265,7 +285,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helv
   .claim span { color: #7cc4f5; }
   .stage.revealed .claim { opacity: 1; transition: opacity 1.2s ease 1.4s; }
 
-  .logo-chip { height: 46px; padding: 6px 12px; border-radius: 12px; }
+  .logo-bar { --logo-h: 15vh; top: 5vh; bottom: auto; left: auto; right: 14px; transform: none; gap: 16px; }  /* rechts neben dem BS-Solutions-Logo im Video */
   .film-controls { right: 14px; bottom: 44px; }
   .footer-bar { left: 14px; right: 14px; bottom: 10px; font-size: .7rem; }
   .ctrl { font-size: .8rem; padding: .45em .9em; }
