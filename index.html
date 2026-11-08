@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="Public/web/favicon-64.png?v=2026110705">
   <link rel="apple-touch-icon" href="Public/web/apple-touch-icon.png?v=2026110705">
   <link rel="preload" as="image" href="Public/web/hero.jpg?v=2026110705">
-  <link rel="stylesheet" href="hero.css?v=2026110807">
+  <link rel="stylesheet" href="hero.css?v=2026110811">
 </head>
 <body>
   <main class="stage" id="stage">
@@ -20,7 +20,7 @@
       <source src="Public/BS%20Solutions%20hero_Video_original.mp4?v=2026110705" type="video/mp4">
     </video>
 
-    <!-- Film: vier Clips, die mit Pixel-Übergang ineinander übergehen (Reihenfolge/Längen in hero.js) -->
+    <!-- Film: fünf Clips, die mit Pixel-Übergang ineinander übergehen (Reihenfolge/Längen in hero.js) -->
     <div class="film" id="film">
       <video class="clip is-active" id="clipA" muted playsinline preload="auto" poster="Public/web/bestand-poster.jpg?v=2026110705">
         <source src="Public/bg-video.mp4?v=2026110705" type="video/mp4">
@@ -34,9 +34,15 @@
       <video class="clip" id="clipD" muted playsinline preload="auto" poster="Public/web/future-poster.jpg?v=2026110705">
         <source src="Public/BS%20Future_Video_original.mp4?v=2026110705" type="video/mp4">
       </video>
-      <!-- Bestandsprofi-Logo (freigestellt): blendet mittig ein und wieder aus, sobald das bg-video (clipA) läuft – Animation per CSS -->
-      <div class="clip-title" aria-hidden="true">
+      <video class="clip" id="clipE" muted playsinline preload="auto" poster="Public/web/mydispo-kurz-poster.jpg?v=2026110801">
+        <source src="Public/myDispo_Film_kurz.mp4?v=2026110801" type="video/mp4">
+      </video>
+      <!-- Produkt-Logos (freigestellt): blenden mittig ein und wieder aus, sobald ihr Clip läuft – Animation per CSS -->
+      <div class="clip-title clip-title--bestandsprofi" aria-hidden="true">
         <img src="Public/web/logo-bestandsprofi-hell.png?v=2026110804" alt="">
+      </div>
+      <div class="clip-title clip-title--mydispo" aria-hidden="true">
+        <img src="Public/web/logo-mydispo-hell.png?v=2026110805" alt="">
       </div>
       <!-- Film-Look: Pixel-Glitch, Korn, Kratzer, Flackern, Vignette -->
       <canvas class="pixel-fx" id="pixelFx" aria-hidden="true"></canvas>
@@ -67,7 +73,6 @@
 
     <!-- Steuerung während des Films -->
     <div class="film-controls" id="filmControls">
-      <button type="button" class="ctrl" id="soundBtn" aria-pressed="false">🔇 Ton an</button>
       <button type="button" class="ctrl" id="skipBtn">Überspringen ⏭</button>
     </div>
     <div class="progress" id="progress"><span id="progressBar"></span></div>
@@ -80,16 +85,16 @@
       <button type="button" class="ctrl" id="replayBtn">↻ Film von vorn</button>
     </div>
 
-    <!-- immer sichtbar: KI-Kennzeichnung (EU AI Act Art. 50) und Pflichtlinks -->
+    <!-- immer sichtbar: Pflichtlinks; KI-Kennzeichnung (EU AI Act Art. 50) steht in Datenschutz/Impressum, nicht auf dem Video -->
     <footer class="footer-bar">
-      <p class="ai-label">KI-generierter Film · dargestellte Personen sind nicht real</p>
       <nav class="legal-links">
+        <a href="datenschutz.html#ki-hinweis">KI-Hinweis</a>
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
       </nav>
     </footer>
   </main>
 
-  <script src="hero.js?v=2026110803"></script>
+  <script src="hero.js?v=2026110811"></script>
 </body>
 </html>

@@ -1,13 +1,13 @@
-/* BS Solutions – Intro-Film (Endlosschleife): 3 gemischte Clips + Future-Video (immer an 3. Stelle) → weiche Überblendung → Hero-Video → Logos → von vorn */
+/* BS Solutions – Intro-Film (Endlosschleife): 4 gemischte Clips + Future-Video (immer an 3. Stelle) → weiche Überblendung → Hero-Video → Logos → von vorn */
 (() => {
   const $ = id => document.getElementById(id);
   const stage = $('stage');
-  const soundBtn = $('soundBtn'), skipBtn = $('skipBtn'), startBtn = $('startBtn'), replayBtn = $('replayBtn');
+  const skipBtn = $('skipBtn'), startBtn = $('startBtn'), replayBtn = $('replayBtn');
   const progressBar = $('progressBar');
   const heroVideo = $('heroVideo');
 
   /*
-   * Die drei gemischten Film-Szenen (das Hero-Video kommt immer als Abschluss).
+   * Die vier gemischten Film-Szenen (das Hero-Video kommt immer als Abschluss).
    * start:  ab welcher Sekunde der Clip gezeigt wird
    * length: wie viele Sekunden gezeigt werden (null = bis zum Ende)
    * expected: ungefähre Gesamtlänge – nur für den Fortschrittsbalken
@@ -16,6 +16,7 @@
     { el: $('clipA'), start: 0, length: 3.1 },    // bg-video – insgesamt 4 s sichtbar (3,1 s + 0,9 s Übergang)
     { el: $('clipB'), start: 0, length: 3, expected: 11.63 },      // BS Büro – nur die ersten 3 s
     { el: $('clipC'), start: 0, length: null, expected: 8.08 },   // BSS-Video (8 s, fragmentierte MP4)
+    { el: $('clipE'), start: 0, length: 2.5, expected: 3.5 },     // myDispo-Film – die ersten 2,5 s (Datei auf 3,5 s gekürzt)
   ];
 
   /*
@@ -37,13 +38,11 @@
 
   /*
    * Reihenfolge pro Durchlauf (Indizes in SCENES).
-   * Die ersten Durchläufe sind fest vorgegeben, danach wird zufällig gemischt –
+   * Der erste Durchlauf ist fest vorgegeben, danach wird zufällig gemischt –
    * nie zweimal hintereinander dieselbe Reihenfolge.
    */
   const ORDERS = [
-    [0, 1, 2],   // 1. Durchlauf: bg-video, Büro, BSS
-    [1, 0, 2],   // 2. Durchlauf: Büro, bg-video, BSS
-    [2, 1, 0],   // 3. Durchlauf: BSS, Büro, bg-video
+    [0, 3, 1, 2],   // 1. Durchlauf: bg-video, myDispo, (Future), Büro, BSS – danach zufällig
   ];
   let pass = 0;
   let lastOrder = ORDERS[0];
@@ -51,7 +50,7 @@
     if (n < ORDERS.length) return ORDERS[n];
     let o;
     do {
-      o = [0, 1, 2];
+      o = SCENES.map((_, i) => i);
       for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
     } while (o.join() === lastOrder.join());
     return o;
@@ -65,7 +64,6 @@
 
   let index = 0;                // aktuelle Szene
   let current = seq[0].el;
-  let muted = true;             // Browser erlauben Autoplay nur stumm
   let revealed = false;
   let progressMax = 0;
   let timers = [];
@@ -135,7 +133,7 @@
   /* ---------- Film-Ablauf ---------- */
   function play(video) {
     video._stopped = false;
-    video.muted = muted;
+    video.muted = true;                        // Film läuft grundsätzlich ohne Ton
     const p = video.play();
     if (p && p.catch) p.catch(() => { startBtn.hidden = false; });
   }
@@ -203,49 +201,16 @@
     requestAnimationFrame(updateProgress);
   }
 
-  /* ---------- Ton ---------- */
-  function fadeVolume(video, ms, from, to, done) {
-    const t0 = performance.now();
-    (function step(now) {
-      const k = Math.min(1, (now - t0) / ms);
-      video.volume = Math.min(1, Math.max(0, from + (to - from) * k));
-      if (k < 1) requestAnimationFrame(step); else if (done) done();
-    })(t0);
-  }
-
-  function setMuted(m) {
-    muted = m;
-    clips.forEach(c => { c.muted = m; });
-    heroVideo.muted = m;
-    soundBtn.textContent = m ? '🔇 Ton an' : '🔊 Ton aus';
-    soundBtn.setAttribute('aria-pressed', String(!m));
-  }
-
+  /* ---------- Wiedergabe (alle Videos ohne Ton) ---------- */
   // Absichtliches Anhalten markieren (zur Unterscheidung von Browser-Pausen)
   function stop(video) { video._stopped = true; video.pause(); }
-
-  // Browser blockiert Ton ohne vorherige Interaktion → stumm weiterspielen, Button lädt zum Einschalten ein
-  function fallbackToMuted(video) {
-    setMuted(true);
-    soundBtn.classList.add('pulse');
-    video.play().catch(() => {});              // notfalls bleibt das Poster-Bild stehen
-  }
 
   function playHero() {
     heroVideo.currentTime = 0;
     heroVideo._stopped = false;
-    heroVideo.muted = muted;                   // stumm, außer der Besucher hat den Ton eingeschaltet
-    heroVideo.volume = 0;
-    fadeVolume(heroVideo, 1500, 0, 1);
-    const p = heroVideo.play();
-    if (p && p.catch) p.catch(() => fallbackToMuted(heroVideo));
+    heroVideo.muted = true;                    // auch das Hero-Video (mit Logo) bleibt stumm
+    heroVideo.play().catch(() => {});          // notfalls bleibt das Poster-Bild stehen
   }
-
-  // Chrome nimmt play() mit Ton teils an und pausiert kurz darauf selbst → abfangen
-  [heroVideo, ...clips].forEach(v => v.addEventListener('pause', () => {
-    const shouldPlay = v === heroVideo ? revealed : (!revealed && v === current);
-    if (!v._stopped && !v.ended && shouldPlay && !v.muted) fallbackToMuted(v);
-  }));
 
   /* ---------- Übergang zum Hero-Video ---------- */
   function reveal() {
@@ -256,19 +221,14 @@
     stage.classList.add('revealed');
     // Hero-Video startet mit der Einblendung
     if (!reduceMotion) playHero();
-    // Ton des Films sanft ausblenden, Video danach anhalten
-    fadeVolume(current, 1800, 1, 0, () => clips.forEach(c => { stop(c); c.volume = 1; }));
+    // Film-Clips anhalten, sobald der Film ausgeblendet ist
+    timers.push(setTimeout(() => clips.forEach(stop), 1800));
     const d = reduceMotion ? 0 : 1;
     timers.push(setTimeout(() => stage.classList.add('logos-in'), LOGOS_AFTER * d));
     timers.push(setTimeout(() => stage.classList.add('final'), FINAL_AFTER * d));
   }
 
   /* ---------- Steuerung ---------- */
-  soundBtn.addEventListener('click', () => {
-    soundBtn.classList.remove('pulse');
-    setMuted(!muted);
-    if (revealed && heroVideo.paused && !reduceMotion) { heroVideo._stopped = false; heroVideo.play().catch(() => {}); }
-  });
   skipBtn.addEventListener('click', () => reveal());
   startBtn.addEventListener('click', () => { startBtn.hidden = true; play(current); });
   replayBtn.addEventListener('click', restart);
@@ -290,7 +250,7 @@
       sc.el.currentTime = sc.start;
       sc.el.classList.remove('is-active');
     });
-    void stage.offsetWidth;                      // Reflow: CSS-Animationen (z. B. „Bestandsprofi“) starten neu
+    void stage.offsetWidth;                      // Reflow: CSS-Animationen (z. B. Produkt-Logos) starten neu
     seq[0].el.classList.add('is-active');
     index = 0; current = seq[0].el;
     progressMax = 0;
@@ -300,7 +260,6 @@
     play(current);
     glitch({ duration: 700, peak: 48, source: () => seq[0].el });
     // Hero-Video erst anhalten, wenn der Film es vollständig verdeckt
-    fadeVolume(heroVideo, 1300, heroVideo.volume, 0);
     timers.push(setTimeout(() => { if (!revealed) { stop(heroVideo); heroVideo.currentTime = 0; } }, 1400));
     scheduleRandomGlitch();
     requestAnimationFrame(updateProgress);
